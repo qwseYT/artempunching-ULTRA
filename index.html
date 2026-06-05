@@ -602,11 +602,11 @@ function playBonk() {
   comboDisplay.style.transform = 'scale(1.35)';
   setTimeout(() => comboDisplay.style.transform = 'scale(1)', 200);
 
-  // Sound
-  sound.currentTime = 0;
-  sound.playbackRate = 0.85 + Math.random() * 0.35 + Math.min(combo * 0.008, 0.15);
-  sound.volume = Math.min(0.5 + combo * 0.02, 1);
-  sound.play();
+  // Sound (clone to allow overlapping)
+  const snd = sound.cloneNode();
+  snd.playbackRate = 0.85 + Math.random() * 0.35 + Math.min(combo * 0.008, 0.15);
+  snd.volume = Math.min(0.5 + combo * 0.02, 1);
+  snd.play().then(() => snd.addEventListener('ended', () => snd.remove())).catch(() => snd.remove());
 
   // Photo shake
   photo.classList.remove('bonk-shake');
@@ -713,10 +713,10 @@ function triggerAscension() {
   }
 
   // Play a slowed-down bonk sound
-  sound.currentTime = 0;
-  sound.playbackRate = 0.5;
-  sound.volume = 0.4;
-  sound.play();
+  const ascSnd = sound.cloneNode();
+  ascSnd.playbackRate = 0.3;
+  ascSnd.volume = 0.4;
+  ascSnd.play().then(() => ascSnd.addEventListener('ended', () => ascSnd.remove())).catch(() => ascSnd.remove());
 }
 
 // Close ascension
@@ -729,6 +729,7 @@ ascCloseBtn.onclick = () => {
 photo.onclick = playBonk;
 
 document.addEventListener('keydown', (e) => {
+  if (e.repeat) return;
   if (e.code === 'Space' || e.code === 'Enter') {
     e.preventDefault();
     playBonk();
