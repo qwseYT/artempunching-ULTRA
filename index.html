@@ -695,6 +695,9 @@ function triggerAscension() {
   if (ascensionActive) return;
   ascensionActive = true;
 
+  // Enter fullscreen
+  try { document.documentElement.requestFullscreen(); } catch (_) {}
+
   ascension.classList.add('active');
 
   // Spawn rising light particles
@@ -723,6 +726,7 @@ function triggerAscension() {
 ascCloseBtn.onclick = () => {
   ascension.classList.remove('active');
   ascensionActive = false;
+  try { if (document.fullscreenElement) document.exitFullscreen(); } catch (_) {}
 };
 
 // ===== EVENTS =====
