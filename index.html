@@ -14,7 +14,7 @@ body {
     color: white;
     font-family: Arial, sans-serif;
 
-    /* Курсор .cur из той же папки */
+    
     cursor: url('hammer.cur'), auto;
 }
 
@@ -22,11 +22,11 @@ body {
     width: 300px;
     border-radius: 12px;
 
-    /* Принудительно задаём курсор для фото */
+   
     cursor: url('hammer.cur'), auto;
 }
 
-/* Анимация тряски фото */
+
 .shake {
     animation: shake 0.15s linear;
 }
@@ -53,7 +53,7 @@ const sound = document.getElementById("bonk-sound");
 
 photo.onclick = () => {
     photo.classList.remove("shake");
-    void photo.offsetWidth; // сброс анимации
+    void photo.offsetWidth; 
     photo.classList.add("shake");
 
     sound.currentTime = 0;
