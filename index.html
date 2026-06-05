@@ -290,6 +290,129 @@ h1 {
   margin-top: 4px;
 }
 
+/* ===== ASCENSION (5000 BONKS) ===== */
+.ascension {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.ascension.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ascension-light {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #fff 0%, rgba(255,255,230,0.9) 20%, rgba(255,240,200,0.5) 40%, rgba(200,210,255,0.15) 60%, transparent 80%);
+  animation: ascLight 4s ease-in-out forwards;
+}
+@keyframes ascLight {
+  0%   { opacity: 0; transform: scale(0.2); }
+  25%  { opacity: 1; transform: scale(1.3); }
+  60%  { opacity: 0.9; transform: scale(1.8); }
+  100% { opacity: 0.7; transform: scale(3); }
+}
+
+.ascension-rays {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0.03) 0deg 10deg, transparent 10deg 20deg);
+  animation: ascRays 6s linear forwards;
+}
+@keyframes ascRays {
+  0%   { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  20%  { opacity: 1; transform: scale(1) rotate(15deg); }
+  100% { opacity: 0.3; transform: scale(2) rotate(45deg); }
+}
+
+.ascension-img {
+  position: relative;
+  z-index: 2;
+  width: 260px;
+  height: 260px;
+  border-radius: 16px;
+  object-fit: cover;
+  opacity: 0;
+  box-shadow: 0 0 60px rgba(255,255,255,0.6), 0 0 120px rgba(255,255,200,0.3);
+  animation: ascImg 5s ease-in-out forwards;
+}
+@keyframes ascImg {
+  0%   { opacity: 0; transform: translateY(0) scale(0.8); filter: brightness(1); }
+  15%  { opacity: 1; transform: translateY(0) scale(1.1); filter: brightness(1.5); }
+  40%  { opacity: 1; transform: translateY(-60px) scale(1.05); filter: brightness(2.5) saturate(0.5); }
+  70%  { opacity: 0.7; transform: translateY(-160px) scale(0.7); filter: brightness(4) saturate(0); }
+  100% { opacity: 0; transform: translateY(-300px) scale(0.2); filter: brightness(8); }
+}
+
+.ascension-text {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 900;
+  text-align: center;
+  max-width: 500px;
+  line-height: 1.4;
+  margin-top: 24px;
+  text-shadow: 0 0 40px rgba(255,255,255,0.6), 0 4px 20px rgba(0,0,0,0.3);
+  opacity: 0;
+  animation: ascText 2s ease 1.8s forwards;
+}
+@keyframes ascText {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.ascension-light-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.ascension-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, rgba(255,255,200,0.5));
+  animation: ascParticle 3s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ascParticle {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-200px) scale(0); }
+}
+
+.ascension-close {
+  position: absolute;
+  z-index: 3;
+  bottom: 40px;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 30px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+  animation: ascClose 1s ease 4s forwards;
+}
+.ascension-close:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+@keyframes ascClose {
+  to { opacity: 1; }
+}
+
 /* ===== HINT ===== */
 .hint {
   color: rgba(255,255,255,0.18);
@@ -351,6 +474,15 @@ h1 {
 <div class="achievement" id="achievement">
   <div class="achievement-title">🏆 Достижение!</div>
   <div class="achievement-desc" id="achievementDesc"></div>
+</div>
+
+<div class="ascension" id="ascension">
+  <div class="ascension-light"></div>
+  <div class="ascension-rays"></div>
+  <div class="ascension-light-particles" id="ascParticles"></div>
+  <img class="ascension-img" id="ascensionImg" src="photo.png" alt="">
+  <div class="ascension-text">😇 Вы уебали Артёма!<br>Он улетел к своей матери на небеса!</div>
+  <button class="ascension-close" id="ascCloseBtn">👆 Кликни чтобы продолжить</button>
 </div>
 
 <script>
@@ -428,7 +560,7 @@ const ACHIEVEMENTS = {
   500:  '👑 Артем в нокауте',
   1000: '💀💀💀 АБСОЛЮТНЫЙ БОНК',
   2500: '👑👑👑 ИМПЕРАТОР БОНКА',
-  5000: '🌌 БОНКОВАЯ БЕСКОНЕЧНОСТЬ',
+  5000: '😇 Вы уебали Артёма! Он улетел к своей матери на небеса!',
 };
 
 const BONK_WORDS = [
@@ -539,6 +671,7 @@ function checkAchievements(score) {
     if (score >= tier && !localStorage.getItem('bonk_ach_' + tier)) {
       showAchievement(ACHIEVEMENTS[tier]);
       localStorage.setItem('bonk_ach_' + tier, 'true');
+      if (tier === 5000) triggerAscension();
     }
   }
 }
@@ -550,6 +683,47 @@ function showAchievement(text) {
   if (achTimeout) clearTimeout(achTimeout);
   achTimeout = setTimeout(() => achievement.classList.remove('show'), 3500);
 }
+
+// ===== ASCENSION (5000 BONKS) =====
+const ascension = document.getElementById('ascension');
+const ascImg = document.getElementById('ascensionImg');
+const ascParticles = document.getElementById('ascParticles');
+const ascCloseBtn = document.getElementById('ascCloseBtn');
+let ascensionActive = false;
+
+function triggerAscension() {
+  if (ascensionActive) return;
+  ascensionActive = true;
+
+  ascension.classList.add('active');
+
+  // Spawn rising light particles
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'ascension-particle';
+    const size = 4 + Math.random() * 16;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = (Math.random() * 100) + '%';
+    p.style.top = (50 + Math.random() * 50) + '%';
+    p.style.animationDelay = (Math.random() * 2) + 's';
+    p.style.animationDuration = (2 + Math.random() * 2) + 's';
+    ascParticles.appendChild(p);
+    setTimeout(() => p.remove(), 5000);
+  }
+
+  // Play a slowed-down bonk sound
+  sound.currentTime = 0;
+  sound.playbackRate = 0.5;
+  sound.volume = 0.4;
+  sound.play();
+}
+
+// Close ascension
+ascCloseBtn.onclick = () => {
+  ascension.classList.remove('active');
+  ascensionActive = false;
+};
 
 // ===== EVENTS =====
 photo.onclick = playBonk;
